@@ -2,17 +2,26 @@ import re
 from collections import Counter
 
 ip_list = []
+ip_list_accepted = []
+ip_list_denied = []
 
 with open ("auth.log") as f:
     for line in f:
         if "failed password" in line.lower():
-            ip = re.search("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", line)
+            ip = re.search(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", line)
             ip_list.append(ip.group())
-            print(ip.group())
+            ip_list_denied.append(ip.group())
+            #print(ip.group())
         elif "accepted password" in line.lower():
-            ip = re.search("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", line)
+            ip = re.search(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", line)
             ip_list.append(ip.group())
-            print(ip.group())
+            ip_list_accepted.append(ip.group())
+            #print(ip.group())
 
-result = Counter(ip_list)
-print(result)
+result_all = Counter(ip_list)
+result_accepted = Counter(ip_list_accepted)
+result_denied = Counter(ip_list_denied)
+
+print(f"Combined: {result_all}")
+print(f"Accepted: {result_accepted}")
+print(f"Denied: {result_denied}")
