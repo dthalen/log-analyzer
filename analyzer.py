@@ -21,9 +21,12 @@ with open ("auth.log") as f:
             ip_list.append(ip.group())
             ip_list_accepted.append(ip.group())
             parts = line.split()
+            month = parts[0]
+            day = parts[1]
+            date = month + " " + day
             hour = int(parts[2].split(":")[0])
             if hour < 6:
-                odd_hour_alert.append(f"[WARNING⚠️ ] successful login from {ip.group()} at {hour:02d}:00 - unusual hour")  
+                odd_hour_alert.append(f"[WARNING⚠️ ] successful login from {ip.group()} at {hour:02d}:00 on {date} - unusual hour")  
              
 
 result_all = Counter(ip_list)
