@@ -1,28 +1,38 @@
 # log-analyzer
 
-A small Python tool that scans Linux `auth.log` files and flags SSH brute-force
-attacks — including attempts that eventually succeeded.
+A small Python tool that scans Linux `auth.log` files and flags suspicious SSH
+activity — brute-force attacks, successful breaches, and logins at unusual hours.
 
 I built this while learning security through Hack The Box. After analysing auth
 logs by hand on a few boxes, I wanted to automate the boring part: spotting which
-IPs are hammering the server and whether any of them got in.
+IPs are hammering the server, whether any of them got in, and whether anyone
+logged in when they shouldn't have.
 
-## What it does
+## What it detects
 
-- Reads an SSH authentication log line by line
-- Pulls the source IP out of each login line with a regular expression
-- Separates **failed** logins from **successful** ones
-- Counts attempts per IP
-- Raises alerts for:
-  - IPs with a high number of failed logins (likely brute force)
-  - IPs that failed many times **and then succeeded** (a likely breach — the
-    most important case)
+The tool reads an SSH authentication log and produces a short report grouped into
+three sections:
+
+- **Breaches** — an IP that failed many times and then successfully logged in
+  (the most serious case: a brute force that worked).
+- **Brute-force attempts** — an IP with a high number of failed logins.
+- **Odd-hour logins** — a *successful* login during the night (00:00–06:00),
+  with the IP and the date, since a real login at 4am is worth a second look even
+  if it isn't a brute force.
 
 ## Example output
 
 ```
-[ALERT]   45.142.120.33 had 40 failed logins — possible brute force
-[WARNING] 193.169.255.12 had 18 failed logins and then logged in successfully — possible successful brute force
+--- BREACHES ---
+[CRITICAL] 141.98.10.60 had 25 failed logins and successfully logged in! - possible brute force successful!
+
+--- BRUTE FORCE ATTEMPTS ---
+[WARNING] 193.169.255.12 had 62 failed logins! - possible attempted brute force!
+[WARNING] 92.63.197.55 had 70 failed logins! - possible attempted brute force!
+
+--- ODD-HOUR LOGINS ---
+[WARNING] successful login from 86.22.30.4 at 04:00 on Oct 24 - unusual hour
+[WARNING] successful login from 86.22.30.4 at 04:00 on Oct 25 - unusual hour
 ```
 
 ## How to run it
@@ -36,32 +46,39 @@ Linux system, SSH auth events are logged to `/var/log/auth.log`.
 
 ## How it works
 
-The script keeps three lists of IPs — all attempts, successful logins, and
-failed logins — and uses `collections.Counter` to tally them. A login line like:
+The script reads the log line by line and, for each login line:
+
+- extracts the source IP with a regular expression
+  (`\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}`)
+- separates **failed** logins from **successful** ones
+- for successful logins, also reads the date and hour from the start of the line
+
+It then counts attempts per IP with `collections.Counter`, builds a list of
+alerts for each category, and prints them grouped into sections. A line like:
 
 ```
-Oct 26 14:33:01 server sshd[1123]: Failed password for root from 45.142.120.33 port 4022 ssh2
+Oct 24 04:21:30 srv-web01 sshd[5532]: Accepted password for deploy from 86.22.30.4 port 57153 ssh2
 ```
 
-is matched for "Failed password" / "Accepted password", and the IP is extracted
-with the pattern `\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}`.
+gives the date (`Oct 24`), the hour (`04`), and the IP (`86.22.30.4`).
 
 ## Known limitations
 
 - **Threshold-based detection misses "low and slow" attacks.** An attacker making
-  only a handful of attempts stays under the alert threshold. A real detection
-  system would also look at timing and patterns, not just volume.
-- **Basic IP regex.** The pattern matches the shape of an IPv4 address but
-  doesn't validate the ranges (e.g. it would accept `999.999.999.999`), and it
-  doesn't handle IPv6.
-- Built for standard OpenSSH `auth.log` format; other log formats aren't parsed yet.
+  only a handful of attempts stays under the alert threshold. A real system would
+  also look at timing and patterns, not just volume.
+- **Counts are merged across days.** The brute-force counts don't separate attempts
+  by date, so an IP that attacked on two days is counted as one total.
+- **Basic IP regex.** It matches the shape of an IPv4 address but doesn't validate
+  the ranges (it would accept `999.999.999.999`) and doesn't handle IPv6.
+- Built for standard OpenSSH `auth.log` format; other formats aren't parsed yet.
 
 ## Possible next steps
 
-- Flag logins at unusual hours
+- Read the log path and thresholds from command-line arguments
+- Separate counts per day
+- Flag odd-hour logins from external IPs more strongly than internal ones
 - Validate IPs properly / support IPv6
-- Read the log path from a command-line argument
-- Output a summary report instead of just printing alerts
 
 ## Why I built it
 
