@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head><title>Log Analyzer Dashboard</title></head>
+<body>
+    <h1>Log Analyzer Dashboard</h1>
+
+    <h2>Breaches</h2>
+    {% for item in breaches %}
+        <p>{{ item }}</p>
+    {% endfor %}
+
+    <h2>Brute Force Attempts</h2>
+    {% for item in brute_force %}
+        <p>{{ item }}</p>
+    {% endfor %}
+
+    <h2>Odd-Hour Logins</h2>
+    {% for item in odd_hours %}
+        <p>{{ item }}</p>
+    {% endfor %}
+</body>
+</html>
