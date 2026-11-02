@@ -1,33 +1,43 @@
 <!DOCTYPE html>
 <html>
-<head><title>Log Analyzer Dashboard</title></head>
+<head><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"><title>Log Analyzer Dashboard</title></head>
 <body>
     <h1>Log Analyzer Dashboard</h1>
 
-    <h2>Breaches</h2>
-    {% for item in breaches %}
-        <p>{{ item }}</p>
-    {% endfor %}
+    <div class="container">
 
-    <h2>Brute Force Attempts</h2>
-    {% for item in brute_force %}
-        <p>{{ item }}</p>
-    {% endfor %}
+        <div class="panel logs">
+            <h2>Raw Logs</h2>
+            {% for line in log_lines %}
+                {% if "Failed" in line %}
+                    <p class="failed">{{ line }}</p>
+                {% elif "Accepted" in line %}
+                    <p class="accepted">{{ line }}</p>
+                {% else %}
+                    <p class="other">{{ line }}</p>
+                {% endif %}
+            {% endfor %}
+        </div>
 
-    <h2>Odd-Hour Logins</h2>
-    {% for item in odd_hours %}
-        <p>{{ item }}</p>
-    {% endfor %}
+        <div class="panel alerts">
+            <h2>Alerts</h2>
 
-    <h2>Raw Logs</h2>
-    {% for line in log_lines %}
-        {% if "Failed" in line %}
-            <p class="failed">{{ line }}</p>
-        {% elif "Accepted" in line %}
-            <p class="accepted">{{ line }}</p>
-        {% else %}
-            <p class="other">{{ line }}</p>
-        {% endif %}
-    {% endfor %}
+            <h3>Breaches</h3>
+            {% for item in breaches %}
+                <p>{{ item }}</p>
+            {% endfor %}
+
+            <h3>Brute Force Attempts</h3>
+            {% for item in brute_force %}
+                <p>{{ item }}</p>
+            {% endfor %}
+
+            <h3>Odd-Hour Logins</h3>
+            {% for item in odd_hours %}
+                <p>{{ item }}</p>
+            {% endfor %}
+        </div>
+
+    </div>
 </body>
 </html>

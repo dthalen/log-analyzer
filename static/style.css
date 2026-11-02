@@ -1,0 +1,35 @@
+.container {
+    display: flex;        /* lay children out in a row */
+    gap: 20px;            /* space between the panels */
+}
+
+.panel {
+    border: 2px solid #333;
+    border-radius: 10px;  /* rounded corners, like your sketch */
+    padding: 15px;
+    overflow-y: auto;     /* scroll if content is taller than the panel */
+    height: 80vh;         /* 80% of the screen height */
+}
+
+.logs {
+    flex: 2;              /* logs panel takes 2 shares of width (wider) */
+}
+
+.alerts {
+    flex: 1;              /* alerts panel takes 1 share (narrower) */
+}
+
+.failed {
+    color: #c0392b;       /* red for failed logins */
+    margin: 2px 0;
+}
+
+.accepted {
+    color: #27ae60;       /* green for accepted logins */
+    margin: 2px 0;
+}
+
+.other {
+    color: #888;          /* grey for everything else */
+    margin: 2px 0;
+}
