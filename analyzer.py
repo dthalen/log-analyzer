@@ -1,4 +1,5 @@
 import re
+import argparse
 from collections import Counter
 
 ip_list = []
@@ -9,7 +10,12 @@ brute_force_alerts = []
 breaches_alert = []
 odd_hour_alert = []
 
-with open ("auth.log") as f:
+parser = argparse.ArgumentParser(description="Analyze an SSH auth.log for suspicious activity")
+parser.add_argument("logfile", help="path to the auth.log file")
+parser.add_argument("-t", "--threshold", type=int, default=10, help="failed login count to flag as brute force")
+args = parser.parse_args()
+
+with open (args.logfile) as f:
     for line in f:
         if "failed password" in line.lower():
             ip = re.search(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", line)
@@ -34,7 +40,7 @@ result_accepted = Counter(ip_list_accepted)
 result_denied = Counter(ip_list_denied)
 
 for ip, count in result_denied.items():
-    if count >= 10:
+    if count >= args.threshold:
         if ip in result_accepted:            
             breaches_alert.append(f"[CRITICAL🚨 ] {ip} had {count} failed logins and successfully logged in! - possible attempted brute force successful!")
         else:
