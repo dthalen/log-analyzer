@@ -38,11 +38,16 @@ three sections:
 ## How to run it
 
 ```
-python analyzer.py
+python analyzer.py <path-to-log-file>
+
+# examples
+python analyzer.py auth.log
+python analyzer.py /var/log/auth.log
+python analyzer.py auth.log -t 5      # set the brute-force threshold (default = 10)
 ```
 
-By default it reads a file called `auth.log` in the same folder. On a real
-Linux system, SSH auth events are logged to `/var/log/auth.log`.
+Pass the path to the log file as an argument. On a real Linux system, SSH auth events are logged to `/var/log/auth.log`.
+Use `-t` / `--threshold` to change how many failed logins count as a brute-force attempt (default 10).
 
 ## How it works
 
@@ -75,7 +80,6 @@ gives the date (`Oct 24`), the hour (`04`), and the IP (`86.22.30.4`).
 
 ## Possible next steps
 
-- Read the log path and thresholds from command-line arguments
 - Separate counts per day
 - Flag odd-hour logins from external IPs more strongly than internal ones
 - Validate IPs properly / support IPv6
