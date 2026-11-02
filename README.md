@@ -14,7 +14,7 @@ logged in when they shouldn't have.
 Upload a log file and get a colour-coded breakdown: summary stats, the raw log
 with failed/accepted logins highlighted and the detected alerts grouped by type.
 
-![Dashboard screenshot](images/dashboard.png)
+![Dashboard screenshot](images/Dashboard.png)
 
 Run it with:
 
