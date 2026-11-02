@@ -1,0 +1,47 @@
+import re
+from collections import Counter
+
+
+def analyze_log(logfile, threshold=10):
+
+    ip_list = []
+    ip_list_accepted = []
+    ip_list_denied = []
+
+    brute_force_alerts = []
+    breaches_alert = []
+    odd_hour_alert = []
+
+    with open (logfile) as f:
+        for line in f:
+            if "failed password" in line.lower():
+                ip = re.search(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", line)
+                ip_list.append(ip.group())
+                ip_list_denied.append(ip.group())
+                
+            elif "accepted password" in line.lower():
+                ip = re.search(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", line)
+                ip_list.append(ip.group())
+                ip_list_accepted.append(ip.group())
+                parts = line.split()
+                month = parts[0]
+                day = parts[1]
+                date = month + " " + day
+                hour = int(parts[2].split(":")[0])
+                if hour < 6:
+                    odd_hour_alert.append(f"[WARNING⚠️ ] successful login from {ip.group()} at {hour:02d}:00 on {date} - unusual hour")  
+                
+
+    result_all = Counter(ip_list)
+    result_accepted = Counter(ip_list_accepted)
+    result_denied = Counter(ip_list_denied)
+
+    for ip, count in result_denied.items():
+        if count >= threshold:
+            if ip in result_accepted:            
+                breaches_alert.append(f"[CRITICAL🚨 ] {ip} had {count} failed logins and successfully logged in! - possible attempted brute force successful!")
+            else:
+                brute_force_alerts.append(f"[WARNING⚠️ ] {ip} had {count} failed logins! - possible attempted brute force!")
+
+
+    return breaches_alert, brute_force_alerts, odd_hour_alert

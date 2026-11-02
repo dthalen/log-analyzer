@@ -1,63 +1,24 @@
-import re
 import argparse
-from collections import Counter
-
-ip_list = []
-ip_list_accepted = []
-ip_list_denied = []
-
-brute_force_alerts = []
-breaches_alert = []
-odd_hour_alert = []
+from detector import analyze_log
 
 parser = argparse.ArgumentParser(description="Analyze an SSH auth.log for suspicious activity")
 parser.add_argument("logfile", help="path to the auth.log file")
 parser.add_argument("-t", "--threshold", type=int, default=10, help="failed login count to flag as brute force")
 args = parser.parse_args()
 
-with open (args.logfile) as f:
-    for line in f:
-        if "failed password" in line.lower():
-            ip = re.search(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", line)
-            ip_list.append(ip.group())
-            ip_list_denied.append(ip.group())
-            
-        elif "accepted password" in line.lower():
-            ip = re.search(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", line)
-            ip_list.append(ip.group())
-            ip_list_accepted.append(ip.group())
-            parts = line.split()
-            month = parts[0]
-            day = parts[1]
-            date = month + " " + day
-            hour = int(parts[2].split(":")[0])
-            if hour < 6:
-                odd_hour_alert.append(f"[WARNING⚠️ ] successful login from {ip.group()} at {hour:02d}:00 on {date} - unusual hour")  
-             
+breaches, brute_force, odd_hours = analyze_log(args.logfile, args.threshold)
 
-result_all = Counter(ip_list)
-result_accepted = Counter(ip_list_accepted)
-result_denied = Counter(ip_list_denied)
-
-for ip, count in result_denied.items():
-    if count >= args.threshold:
-        if ip in result_accepted:            
-            breaches_alert.append(f"[CRITICAL🚨 ] {ip} had {count} failed logins and successfully logged in! - possible attempted brute force successful!")
-        else:
-            brute_force_alerts.append(f"[WARNING⚠️ ] {ip} had {count} failed logins! - possible attempted brute force!")
-
-
-if breaches_alert:
+if breaches:
     print("--- BREACHES ---")
-    for item in breaches_alert:
+    for item in breaches:
         print(f"{item}\n")
 
-if brute_force_alerts:
+if brute_force:
     print("--- BRUTE FORCE ATTEMPTS ---")
-    for item in brute_force_alerts:
+    for item in brute_force:
         print(f"{item}\n")
 
-if odd_hour_alert:
+if odd_hours:
     print("--- ODD-HOUR LOGINS ---")
-    for item in odd_hour_alert:
+    for item in odd_hours:
         print(f"{item}\n")
