@@ -85,3 +85,23 @@ body {
     margin: 2px 0;
     font-family: monospace;
 }
+
+.upload {
+    padding: 0 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.upload button {
+    padding: 8px 16px;
+    background-color: #4046d4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.upload button:hover {
+    background-color: #2d33a0;
+}
