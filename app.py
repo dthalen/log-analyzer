@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    breaches, brute_force, odd_hours = analyze_log("auth.log")
+    breaches, brute_force, odd_hours, stats = analyze_log("auth.log")
 
     with open ("auth.log") as f:
         log_lines = f.readlines()
@@ -14,7 +14,8 @@ def home():
                            breaches=breaches,
                            brute_force=brute_force,
                            odd_hours=odd_hours,
-                           log_lines=log_lines)
+                           log_lines=log_lines,
+                           stats=stats)
 
 if __name__ == "__main__":
     app.run(debug=True)

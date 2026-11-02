@@ -6,7 +6,7 @@ parser.add_argument("logfile", help="path to the auth.log file")
 parser.add_argument("-t", "--threshold", type=int, default=10, help="failed login count to flag as brute force")
 args = parser.parse_args()
 
-breaches, brute_force, odd_hours = analyze_log(args.logfile, args.threshold)
+breaches, brute_force, odd_hours, stats = analyze_log(args.logfile, args.threshold)
 
 if breaches:
     print("--- BREACHES ---")

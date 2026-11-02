@@ -1,8 +1,29 @@
 <!DOCTYPE html>
 <html>
-<head><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"><title>Log Analyzer Dashboard</title></head>
+<head>
+    <title>Log Analyzer Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
 <body>
-    <h1>Log Analyzer Dashboard</h1>
+
+    <div class="header">
+        <h1>Log Analyzer Dashboard</h1>
+    </div>
+
+    <div class="stats">
+        <div class="stat-box">
+            <div class="stat-number">{{ stats.total }}</div>
+            <div class="stat-label">Total logins</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">{{ stats.failed }}</div>
+            <div class="stat-label">Failed attempts</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">{{ stats.breaches }}</div>
+            <div class="stat-label">Breaches detected</div>
+        </div>
+    </div>
 
     <div class="container">
 
@@ -39,5 +60,6 @@
         </div>
 
     </div>
+
 </body>
 </html>

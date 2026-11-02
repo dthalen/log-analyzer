@@ -11,7 +11,7 @@ def analyze_log(logfile, threshold=10):
     brute_force_alerts = []
     breaches_alert = []
     odd_hour_alert = []
-
+    
     with open (logfile) as f:
         for line in f:
             if "failed password" in line.lower():
@@ -35,13 +35,15 @@ def analyze_log(logfile, threshold=10):
     result_all = Counter(ip_list)
     result_accepted = Counter(ip_list_accepted)
     result_denied = Counter(ip_list_denied)
+    total_logins = len(ip_list)
+    total_failed = len(ip_list_denied)
 
-    for ip, count in result_denied.items():
+    for ip, count in result_denied.items():        
         if count >= threshold:
             if ip in result_accepted:            
                 breaches_alert.append(f"[CRITICAL🚨 ] {ip} had {count} failed logins and successfully logged in! - possible attempted brute force successful!")
             else:
                 brute_force_alerts.append(f"[WARNING⚠️ ] {ip} had {count} failed logins! - possible attempted brute force!")
 
-
-    return breaches_alert, brute_force_alerts, odd_hour_alert
+    stats = {"total": total_logins, "failed": total_failed, "breaches": len(breaches_alert)}
+    return breaches_alert, brute_force_alerts, odd_hour_alert, stats

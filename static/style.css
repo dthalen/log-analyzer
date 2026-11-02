@@ -1,35 +1,87 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.header {
+    background-color: #4046d4;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+/* ---- stat row ---- */
+.stats {
+    display: flex;
+    gap: 20px;
+    padding: 0 20px;
+    margin-bottom: 20px;
+}
+
+.stat-box {
+    flex: 1;
+    background-color: white;
+    border: 2px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.stat-label {
+    color: #666;
+    margin-top: 5px;
+}
+
+/* ---- panels ---- */
 .container {
-    display: flex;        /* lay children out in a row */
-    gap: 20px;            /* space between the panels */
+    display: flex;
+    gap: 20px;
+    padding: 0 20px 20px 20px;
 }
 
 .panel {
+    background-color: white;
     border: 2px solid #333;
-    border-radius: 10px;  /* rounded corners, like your sketch */
+    border-radius: 10px;
     padding: 15px;
-    overflow-y: auto;     /* scroll if content is taller than the panel */
-    height: 80vh;         /* 80% of the screen height */
+    overflow-y: auto;
+    height: 75vh;
 }
 
 .logs {
-    flex: 2;              /* logs panel takes 2 shares of width (wider) */
+    flex: 2;
 }
 
 .alerts {
-    flex: 1;              /* alerts panel takes 1 share (narrower) */
+    flex: 1;
 }
 
+/* ---- log line colours ---- */
 .failed {
-    color: #c0392b;       /* red for failed logins */
+    color: #c0392b;
     margin: 2px 0;
+    font-family: monospace;
 }
 
 .accepted {
-    color: #27ae60;       /* green for accepted logins */
+    color: #27ae60;
     margin: 2px 0;
+    font-family: monospace;
 }
 
 .other {
-    color: #888;          /* grey for everything else */
+    color: #888;
     margin: 2px 0;
+    font-family: monospace;
 }
