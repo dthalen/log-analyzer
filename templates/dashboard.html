@@ -18,5 +18,16 @@
     {% for item in odd_hours %}
         <p>{{ item }}</p>
     {% endfor %}
+
+    <h2>Raw Logs</h2>
+    {% for line in log_lines %}
+        {% if "Failed" in line %}
+            <p class="failed">{{ line }}</p>
+        {% elif "Accepted" in line %}
+            <p class="accepted">{{ line }}</p>
+        {% else %}
+            <p class="other">{{ line }}</p>
+        {% endif %}
+    {% endfor %}
 </body>
 </html>
