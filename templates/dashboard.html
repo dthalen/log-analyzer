@@ -17,6 +17,10 @@
         </form>
     </div>
 
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
     <div class="stats">
         <div class="stat-box">
             <div class="stat-number">{{ stats.total }}</div>

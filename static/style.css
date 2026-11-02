@@ -105,3 +105,12 @@ body {
 .upload button:hover {
     background-color: #2d33a0;
 }
+
+.error {
+    background-color: #c0392b;
+    color: white;
+    padding: 12px 20px;
+    margin: 0 20px 20px 20px;
+    border-radius: 6px;
+    text-align: center;
+}
